@@ -1,0 +1,10 @@
+---
+- hosts: dev
+  become: yes
+  gather_facts: false
+  tasks:
+    - name: Download Jenkins
+      get_url:
+        url: https://updates.jenkins-ci.org/download/war/2.241/jenkins.war
+        dest: /home/krish/downloads
+        mode: '0755'
