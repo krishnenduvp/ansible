@@ -1,0 +1,18 @@
+---
+- name: Check file stat
+  hosts: all
+  tasks:
+    - name: "Get the file stat"
+      stat:
+        path: /tmp/krish
+      register: file_stat
+    - debug:
+        msg: "Full details of File {{ file_stat.stat }}"
+    - debug:
+        msg:
+          - "Check if exists: {{ file_stat.stat.exists }}"
+          - "Check if link : {{ file_stat.stat.islnk }}"
+          - "Check if readable: {{ file_stat.stat.readable }}"
+          - "Check if directory : {{ file_stat.stat. isdir }}"
+          - "File Permission: {{ file_stat.stat.mode }}"
+
