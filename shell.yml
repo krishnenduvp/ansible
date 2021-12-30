@@ -1,0 +1,13 @@
+---
+- name: Check file stat
+  hosts: all
+  tasks:
+    - name: "Running a shell script/command"
+      shell: "echo Path : $PWD , the environment value is $env_value >> /tmp/output.txt"
+      args:
+        chdir: "/tmp"
+      environment:
+        env_value: "Krish"
+      become: true
+
+
