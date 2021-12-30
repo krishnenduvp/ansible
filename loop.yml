@@ -1,0 +1,20 @@
+---
+- name: Loops
+  hosts: all
+  tasks:
+    - name: "Simple loop example"
+      debug:
+        msg: "User : {{ item }} "
+      loop:
+        - "user1"
+        - "user2"
+
+    - name: "Passing two values"
+      debug:
+        msg: "Username: {{ user.name }} , ID : {{ user.id }}"
+      loop_control:
+        loop_var: user
+      loop:
+        - { name: "Krish" , id: "24" }
+        - { name: "Elon" , id: "33" }
+
