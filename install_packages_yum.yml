@@ -1,0 +1,16 @@
+---
+- name: Check file stat
+  hosts: all
+  tasks:
+    - name: "Set packages to install"
+      set_fact:
+        PACKAGES:
+          - tcsh
+          - ed
+          - vim
+    - name: "Install Packages {{ PACKAGES }}"
+      yum:
+        name: "{{ PACKAGES }}"
+        state: present
+      become: true
+
