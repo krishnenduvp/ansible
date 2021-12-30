@@ -1,0 +1,34 @@
+---
+- name: "File Module"
+  hosts: all
+  tasks:
+    - name: "Creating empty files"
+      file:
+        path:  "/tmp/newfile.txt"
+        mode: 0644
+        owner: root
+        group: root
+        state: touch
+      become: true
+
+    - name: "Creating links"
+      file:
+        src:  "/tmp/output.txt"
+        dest: "/tmp/output_link.txt"
+        force: yes
+        state: link
+
+    - name: "Creating file using loops"
+      file:
+        path: "{{ newfile.path }}"
+        mode: "{{ newfile.mode }}"
+        owner: "{{ newfile.owner }}"
+        state: touch
+      loop_control:
+        loop_var: newfile
+      loop:
+        - { path: "/tmp/newfile_01.txt" , mode: "0644" , owner: "root" }
+        - { path: "/tmp/newfile_02.txt" , mode: "0755" , owner: "apache" }
+        - { path: "/tmp/newfile_03.txt" , mode: "0600" , owner: "krish" }
+      become: true
+
