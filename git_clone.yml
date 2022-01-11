@@ -1,0 +1,43 @@
+---
+# The remote Directory has to be set to a fixed name
+- set_fact:
+    my_remote_tmp_dir: "/tmp/ansible.mygitrepo.{{ 999999999999 | random }}"
+  run_once: true
+
+- set_fact:
+    my_local_tmp_dir: "/tmp/ansible.mygitrepo.{{ 999999999999 | random }}"
+  run_once: true
+
+# Fetch the scripts to the local temp dir
+- block:
+
+  - name: "Create the temporary directory {{ my_local_tmp_dir }} on the local node"
+    file:
+      path: "{{ my_local_tmp_dir }}"
+      state: directory
+
+  - name: "Do a Git pull of the scripts to local {{ my_local_tmp_dir }} directory"
+    git:
+      repo: https://github.com/krishnenduvp/ansible.git
+      #If private git repo      repo: "https://{{ ansible_gitlab_token }}:{{ ansible_gitlab_token_pw }}@{{ git.server }}/{{ git.repo_url}}"
+      dest: "{{ my_local_tmp_dir }}"
+      version: "prod"
+      accept_hostkey: yes
+      ssh_opts: "-o StrictHostKeyChecking=no"
+      clone: yes
+    register: git_clone_out
+
+  connection: local
+  delegate_to: localhost
+  run_once: true
+
+- name: "Create the temporary remote directory {{ my_remote_tmp_dir }}"
+  file:
+    path: "{{ my_remote_tmp_dir }}"
+    state: directory
+
+- name: "Synchronize the Scripts from the local directory {{ my_local_tmp_dir }} to the remote directory {{ my_remote_tmp_dir }}"
+  synchronize:
+    src: "{{ my_local_tmp_dir }}/"
+    dest: "{{ my_remote_tmp_dir }}/"
+
