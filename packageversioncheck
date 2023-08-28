@@ -1,0 +1,28 @@
+- name: "Set version variables"
+  set_fact:
+    current_version: "1.58.2"
+    latest_version: "1.60.2"
+
+- debug:
+    msg: "{{ current_version }} is newer than {{ latest_version }}"
+  when: current_version is version(latest_version, '>')
+
+- debug:
+    msg: "{{ current_version }} is newer than or equal to {{ latest_version }}"
+  when: current_version is version(latest_version, '>=')
+
+- debug:
+    msg: "{{ current_version }} is equal to {{ latest_version }}"
+  when: current_version is version(latest_version, '==')
+
+- debug:
+    msg: "{{ current_version }} is not equal to {{ latest_version }}"
+  when: current_version is version(latest_version, '!=')
+
+- debug:
+    msg: "{{ current_version }} is older than {{ latest_version }}"
+  when: current_version is version(latest_version, '<')
+
+- debug:
+    msg: "{{ current_version }} is older than or equal to {{ latest_version }}"
+  when: current_version is version(latest_version, '<=')
