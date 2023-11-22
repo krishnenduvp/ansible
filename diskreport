@@ -1,0 +1,23 @@
+---
+- name: Get Disk Report
+  hosts: all
+  gather_facts: true
+  become: true
+
+  tasks:
+    - name: Find Filesystems with Disk Utilization > 94%
+      shell: df -h | awk '{if($5 > 94) print $6}' | tail -n +2
+      register: high_util_fs
+
+    - name: Display Filesystems with High Disk Utilization
+      debug:
+        var: high_util_fs.stdout_lines
+
+    - name: Find Files Consuming Most Disk Space
+      shell: find {{ item }} -type f -exec du -h --max-depth=1 {} + | sort -rh | head -n 5
+      register: high_util_files
+      loop: "{{ high_util_fs.stdout_lines }}"
+
+    - name: Display Files Consuming Most Disk Space
+      debug:
+        var: high_util_files.stdout_lines
