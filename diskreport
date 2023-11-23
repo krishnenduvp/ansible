@@ -1,3 +1,17 @@
+- name: Create high_usage_files dictionary
+      set_fact:
+        high_usage_files: >-
+          {{
+            high_util_files.stdout_lines | map('split', '\t') |
+            map('join', ' ') | map('split', ' ') |
+            map('map', 'regex_replace', '^(\\S+) (\\S+) (.+)$', {'size':'\\1', 'time':'\\2', 'path':'\\3'}) |
+            map('combine')
+          }}
+
+    - name: Display high_usage_files dictionary
+      debug:
+        var: high_usage_files
+
 ---
 # tasks file for disk_usage_report
 - name: Find Filesystems with Disk Utilization > 40%
