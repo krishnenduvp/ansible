@@ -1,3 +1,12 @@
+- name: Format Output List
+  set_fact:
+    formatted_output: "{{ formatted_output | default([]) + [item.stdout_lines | map('regex_replace', '^(\\S+\\s+\\S+\\s+\\S+)\\s+(.+)', '\\1\\t\\2') | join('\n')] }}"
+  loop: "{{ high_util_files.results }}"
+
+- name: Display Files Consuming Most Disk Space
+  debug:
+    var: formatted_output
+
 - name: Display Files Consuming Most Disk Space
   debug:
     msg: |
