@@ -1,3 +1,11 @@
+- name: Display Files Consuming Most Disk Space
+  debug:
+    msg: |
+      {% for result in high_util_files.results %}
+      {% for line in result.stdout_lines %}
+      {{ line.split('\t')[0] + '\t' + line.split('\t')[1] + '\t' + line.split('\t')[2] }}
+      {% endfor %}
+      {% endfor %}
 
 - name: Display Files Consuming Most Disk Space
   debug:
