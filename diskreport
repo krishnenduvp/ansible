@@ -1,23 +1,67 @@
 ---
-- name: Get Disk Report
-  hosts: all
-  gather_facts: true
-  become: true
+# tasks file for disk_usage_report
+- name: Find Filesystems with Disk Utilization > 40%
+  shell: df -hP | awk '0+$5 >= 40 {print $6}'
+#shell: df -h | awk '{if($5 >= 42 ) print $6}' | tail -n +2
+  register: high_util_fs
 
-  tasks:
-    - name: Find Filesystems with Disk Utilization > 94%
-      shell: df -h | awk '{if($5 > 94) print $6}' | tail -n +2
-      register: high_util_fs
+- name: Display Filesystems with High Disk Utilization
+  debug:
+    var: high_util_fs.stdout_lines
 
-    - name: Display Filesystems with High Disk Utilization
-      debug:
-        var: high_util_fs.stdout_lines
+- name: Find Files Consuming Most Disk Space
+  shell:
+    cmd: find {{ item }} -xdev -type f -size +10M -exec du -Sh --time {} \+ | sort -rh | head -10
+  register: high_util_files
+  loop: "{{ high_util_fs.stdout_lines }}"
 
-    - name: Find Files Consuming Most Disk Space
-      shell: find {{ item }} -type f -exec du -h --max-depth=1 {} + | sort -rh | head -n 5
-      register: high_util_files
-      loop: "{{ high_util_fs.stdout_lines }}"
+- name: Display Files Consuming Most Disk Space
+  debug:
+    var: high_util_files.stdout_lines
 
-    - name: Display Files Consuming Most Disk Space
-      debug:
-        var: high_util_files.stdout_lines
+Output 
+ok: [localhost] => {
+    "high_util_files": {
+        "changed": true,
+        "msg": "All items completed",
+        "results": [
+            {
+                "ansible_loop_var": "item",
+                "changed": true,
+                "cmd": "find /usr/openv -xdev -type f -size +10M -exec du -Sh --time {} \\+ | sort -rh | head -10",
+                "delta": "0:00:00.015874",
+                "end": "2023-11-23 09:47:19.378709",
+                "failed": false,
+                "invocation": {
+                    "module_args": {
+                        "_raw_params": "find /usr/openv -xdev -type f -size +10M -exec du -Sh --time {} \\+ | sort -rh | head -10",
+                        "_uses_shell": true,
+                        "argv": null,
+                        "chdir": null,
+                        "creates": null,
+                        "executable": null,
+                        "removes": null,
+                        "stdin": null,
+                        "stdin_add_newline": true,
+                        "strip_empty_ends": true,
+                        "warn": true
+                    }
+                },
+                "item": "/usr/openv",
+                "rc": 0,
+                "start": "2023-11-23 09:47:19.362835",
+                "stderr": "",
+                "stderr_lines": [],
+                "stdout": "198M\t2023-11-23 09:41\t/usr/openv/testfile22\n149M\t2022-02-16 03:25\t/usr/openv/lib/psf-plugins/cassandra/cbr_pkg.tar.gz\n100M\t2023-11-23 09:41\t/usr/openv/testfile\n65M\t2022-02-16 03:23\t/usr/openv/java/jre/lib/rt.jar\n38M\t2022-02-16 03:25\t/usr/openv/lib/shared/vddk/lib64/libvim-types.so\n21M\t2022-02-16 03:24\t/usr/openv/java/vrts/nbvsm_l10n/en/help/nbu_sa.vxa\n20M\t2022-02-16 03:24\t/usr/openv/java/vrts/nbvsm_l10n/910000/en/help/nbu_sa.vxa\n20M\t2022-02-16 03:24\t/usr/openv/java/vrts/nbvsm_l10n/900000/en/help/nbu_sa.vxa\n20M\t2022-02-16 03:24\t/usr/openv/java/vrts/nbvsm_l10n/830000/en/help/nbu_sa.vxa\n20M\t2022-02-16 03:24\t/usr/openv/java/vrts/nbvsm_l10n/820000/en/help/nbu_sa.vxa",
+                "stdout_lines": [
+                    "198M\t2023-11-23 09:41\t/usr/openv/testfile22",
+                    "149M\t2022-02-16 03:25\t/usr/openv/lib/psf-plugins/cassandra/cbr_pkg.tar.gz",
+                    "100M\t2023-11-23 09:41\t/usr/openv/testfile",
+                    "65M\t2022-02-16 03:23\t/usr/openv/java/jre/lib/rt.jar",
+                    "38M\t2022-02-16 03:25\t/usr/openv/lib/shared/vddk/lib64/libvim-types.so",
+                    "21M\t2022-02-16 03:24\t/usr/openv/java/vrts/nbvsm_l10n/en/help/nbu_sa.vxa",
+                    "20M\t2022-02-16 03:24\t/usr/openv/java/vrts/nbvsm_l10n/910000/en/help/nbu_sa.vxa",
+                    "20M\t2022-02-16 03:24\t/usr/openv/java/vrts/nbvsm_l10n/900000/en/help/nbu_sa.vxa",
+                    "20M\t2022-02-16 03:24\t/usr/openv/java/vrts/nbvsm_l10n/830000/en/help/nbu_sa.vxa",
+                    "20M\t2022-02-16 03:24\t/usr/openv/java/vrts/nbvsm_l10n/820000/en/help/nbu_sa.vxa"
+                ]
