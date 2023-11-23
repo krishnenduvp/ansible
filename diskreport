@@ -1,4 +1,17 @@
-    msg: "{{ high_util_files.stdout_lines | map('regex_replace', '\\t', ' ') | join('\n') }}"
+198M    2023-11-23 09:41        /usr/openv/testfile22
+149M    2022-02-16 03:25        /usr/openv/lib/psf-plugins/cassandra/cbr_pkg.tar.gz
+100M    2023-11-23 09:41        /usr/openv/testfile
+65M     2022-02-16 03:23        /usr/openv/java/jre/lib/rt.jar
+38M     2022-02-16 03:25        /usr/openv/lib/shared/vddk/lib64/libvim-types.so
+21M     2022-02-16 03:24        /usr/openv/java/vrts/nbvsm_l10n/en/help/nbu_sa.vxa
+20M     2022-02-16 03:24        /usr/openv/java/vrts/nbvsm_l10n/910000/en/help/nbu_sa.vxa
+20M     2022-02-16 03:24        /usr/openv/java/vrts/nbvsm_l10n/900000/en/help/nbu_sa.vxa
+20M     2022-02-16 03:24        /usr/openv/java/vrts/nbvsm_l10n/830000/en/help/nbu_sa.vxa
+20M     2022-02-16 03:24        /usr/openv/java/vrts/nbvsm_l10n/820000/en/help/nbu_sa.vxa
+[root@virtrhl3003s ~]#
+
+
+msg: "{{ high_util_files.stdout_lines | map('regex_replace', '\\t', ' ') | join('\n') }}"
 
 ---
     "msg": [
