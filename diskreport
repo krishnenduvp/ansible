@@ -1,3 +1,44 @@
+---
+# tasks file for disk_usage_report
+- name: Find Filesystems with Disk Utilization > 40%
+  shell: df -hP | awk '0+$5 >= 40 {print $6}'
+  register: high_util_fs
+
+- name: Display Filesystems with High Disk Utilization
+  debug:
+    var: high_util_fs.stdout_lines
+
+- name: Find Files Consuming Most Disk Space
+  shell:
+    cmd: find {{ file_system }} -xdev -type f -size +10M -exec du -Sh --time {} \+ | sort -rh | head -10
+  register: high_util_files
+- debug:
+    msg: "{{high_util_files.stdout_lines }}"
+
+Output
+ok: [virtrhl3003s.cld1.tld.int] => {
+    "msg": [
+        "198M\t2023-11-23 09:41\t/usr/openv/testfile22",
+        "149M\t2022-02-16 03:25\t/usr/openv/lib/psf-plugins/cassandra/cbr_pkg.tar.gz",
+        "100M\t2023-11-23 09:41\t/usr/openv/testfile",
+        "65M\t2022-02-16 03:23\t/usr/openv/java/jre/lib/rt.jar",
+        "38M\t2022-02-16 03:25\t/usr/openv/lib/shared/vddk/lib64/libvim-types.so",
+        "21M\t2022-02-16 03:24\t/usr/openv/java/vrts/nbvsm_l10n/en/help/nbu_sa.vxa",
+        "20M\t2022-02-16 03:24\t/usr/openv/java/vrts/nbvsm_l10n/910000/en/help/nbu_sa.vxa",
+        "20M\t2022-02-16 03:24\t/usr/openv/java/vrts/nbvsm_l10n/900000/en/help/nbu_sa.vxa",
+        "20M\t2022-02-16 03:24\t/usr/openv/java/vrts/nbvsm_l10n/830000/en/help/nbu_sa.vxa",
+        "20M\t2022-02-16 03:24\t/usr/openv/java/vrts/nbvsm_l10n/820000/en/help/nbu_sa.vxa"
+    ]
+}
+
+
+
+
+
+
+
+
+
 - name: Format Output List
   set_fact:
     formatted_output: "{{ formatted_output | default([]) + [item.stdout_lines | map('regex_replace', '^(\\S+\\s+\\S+\\s+\\S+)\\s+(.+)', '\\1\\t\\2') | join('\n')] }}"
