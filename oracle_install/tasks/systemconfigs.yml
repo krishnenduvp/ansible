@@ -64,3 +64,23 @@
   when: "'[never]' not in thp_status.stdout"
   notify: Update GRUB
 
+- name: Gather FQDN from Ansible facts
+  set_fact:
+    fqdn: "{{ ansible_facts['fqdn'] | default(ansible_hostname ~ '.' ~ ansible_domain) }}"
+
+- name: Check if /etc/hosts contains the FQDN
+  lineinfile:
+    path: /etc/hosts
+    line: "{{ fqdn }}"
+    state: present
+    regexp: "{{ fqdn }}"
+  check_mode: yes
+  register: check_hosts
+
+- name: Fail if FQDN is not present in /etc/hosts
+  fail:
+    msg: "The FQDN {{ fqdn }} is not present in /etc/hosts. Please add it."
+  when: check_hosts.changed == true
+  ignore_errors: yes
+
+
