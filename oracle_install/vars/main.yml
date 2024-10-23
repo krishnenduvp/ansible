@@ -1,0 +1,102 @@
+---
+# vars file for oracle_install
+# roles/package_install/vars/main.yml
+packages_list:
+  - bc
+  - gcc
+ipackages_list:
+  - bc
+  - bind-libs
+  - bind-libs-lite
+  - bind-license
+  - bind-utils
+  - binutils
+  - compat-libcap1
+  - compat-libstdc++-33
+  - compat-libstdc++-33.*i686
+  - elfutils-libelf
+  - elfutils-libelf-devel
+  - fontconfig-devel
+  - gcc
+  - gcc-c++
+  - glibc
+  - glibc-devel
+  - glibc-devel.*i686
+  - glibc.*i686
+  - gssproxy
+  - keyutils
+  - ksh
+  - libX11
+  - libX11.*i686
+  - libXau
+  - libXau.*i686
+  - libXext.*i686
+  - libXi
+  - libXi.*i686
+  - libXinerama
+  - libXrandr
+  - libXrender
+  - libXrender-devel
+  - libXrender-devel.*i686
+  - libXrender.*i686
+  - libXtst
+  - libXtst.*i686
+  - libXv
+  - libXxf86dga
+  - libXxf86misc
+  - libXxf86vm
+  - libaio
+  - libaio-devel
+  - libaio-devel.*i686
+  - libaio.*i686
+  - libbasicobjects
+  - libcollection
+  - libdmx
+  - libevent
+  - libgcc
+  - libgcc.*i686
+  - libgfortran
+  - libini_config
+  - libnfsidmap
+  - libpath_utils
+  - libquadmath
+  - libref_array
+  - libstdc++
+  - libstdc++-devel
+  - libstdc++-devel.*i686
+  - libstdc++.*i686
+  - libtirpc
+  - libverto-libevent
+  - libxcb
+  - libxcb.*i686
+  - make
+  - net-tools
+  - nfs-utils
+  - pam-devel
+  - psmisc
+  - quota
+  - quota-nls
+  - rpcbind
+  - smartmontools
+  - sysstat
+  - tcp_wrappers
+  - unixODBC
+  - unzip
+  - xorg-x11-font-utils
+  - xorg-x11-utils
+  - zip
+  - zlib-devel
+  - zlib-devel.*i686
+
+groups_list:
+  - { name: "oinstall", gid: 54321 }
+  - { name: "dba", gid: 54322 }
+  - { name: "oper", gid: 54323 }
+  - { name: "backupdba", gid: 54324 }
+  - { name: "dgdba", gid: 54325 }
+  - { name: "kmdba", gid: 54326 }
+  - { name: "asmdba", gid: 54327 }
+  - { name: "asmoper", gid: 54328 }
+  - { name: "asmadmin", gid: 54329 }
+  - { name: "racdba", gid: 54330 }
+

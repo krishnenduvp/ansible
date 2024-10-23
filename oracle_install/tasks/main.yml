@@ -1,0 +1,13 @@
+---
+- name: Include filesystem tasks
+  include_tasks: filesystem.yml
+
+- name: Include package installation tasks
+  include_tasks: package_installation.yml
+
+- name: Include system configuration tasks
+  include_tasks: systemconfigs.yml
+
+- name: Include oracle user configuration tasks
+  include_tasks: oracle_user_profile.yml
+  

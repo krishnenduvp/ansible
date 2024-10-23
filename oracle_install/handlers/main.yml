@@ -1,0 +1,15 @@
+---
+# handlers file for oracle_install
+- name: Update GRUB
+  command: grub2-mkconfig -o /boot/grub2/grub.cfg
+  when: ansible_os_family == "RedHat"
+
+- name: Restart systemd-logind
+  systemd:
+    name: systemd-logind
+    state: restarted
+
+- name: Restart network
+  systemd:
+    name: network
+    state: restarted    

@@ -1,0 +1,75 @@
+- name: Check if /u01 is mounted
+  command: mountpoint -q /u01
+  register: u01_mount_check
+  ignore_errors: yes
+
+- name: Check if /u02 is mounted
+  command: mountpoint -q /u02
+  register: u02_mount_check
+  ignore_errors: yes
+
+- name: Manage /u01 volume if conditions met
+  block:
+    - name: Create Physical Volume for /u01
+      command: pvcreate /dev/{{ partition_u01 }}
+
+    - name: Create Volume Group for /u01
+      command: vgcreate oracle_u01vg /dev/{{ partition_u01 }}
+
+    - name: Create Logical Volume for /u01
+      command: lvcreate -l 100%FREE oracle_u01vg -n u01lv
+
+    - name: Format /u01 logical volume with XFS
+      command: mkfs -t xfs /dev/mapper/oracle_u01vg-u01lv
+
+    - name: Create mount point for /u01 if not exist
+      file:
+        path: /u01
+        state: directory
+
+    - name: Append entry to /etc/fstab for /u01
+      lineinfile:
+        path: /etc/fstab
+        line: "/dev/mapper/oracle_u01vg-u01lv   /u01        xfs    defaults,nodev           1 2"
+        state: present
+        create: yes
+        insertafter: EOF
+
+    - name: Mount /u01
+      command: mount /u01
+
+  when: partition_u01 is defined and u01_mount_check.rc != 0
+
+- name: Manage /u02 volume if conditions met
+  block:
+    - name: Create Physical Volume for /u02
+      command: pvcreate /dev/{{ partition_u02 }}
+
+    - name: Create Volume Group for /u02
+      command: vgcreate oracle_u02vg /dev/{{ partition_u02 }}
+
+    - name: Create Logical Volume for /u02
+      command: lvcreate -l 100%FREE oracle_u02vg -n u02lv
+
+    - name: Format /u02 logical volume with XFS
+      command: mkfs -t xfs /dev/mapper/oracle_u02vg-u02lv
+
+    - name: Create mount point for /u02 if not exist
+      file:
+        path: /u02
+        state: directory
+
+    - name: Append entry to /etc/fstab for /u02
+      lineinfile:
+        path: /etc/fstab
+        line: "/dev/mapper/oracle_u02vg-u02lv   /u02        xfs    defaults,nodev           1 2"
+        state: present
+        create: yes
+        insertafter: EOF
+
+    - name: Mount /u02
+      command: mount /u02
+
+  when: partition_u02 is defined and u02_mount_check.rc != 0
+
+

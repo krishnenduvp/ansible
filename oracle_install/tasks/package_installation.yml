@@ -1,0 +1,38 @@
+---
+- name: Include filesystem tasks
+  include_tasks: filesystem.yml
+
+- name: Gather package facts
+  package_facts:
+
+- name: Install missing packages
+  yum:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ packages_list }}"
+  when: item not in ansible_facts.packages
+  #  ignore_errors: yes
+  register: install_result
+
+- name: Set a fact for failed packages
+  set_fact:
+    failed_packages: "{{ failed_packages | default([]) + [item.item] }}"
+  loop: "{{ install_result.results }}"
+  when: "'failed' in item and item.failed"
+
+- name: Print message for failed packages
+  debug:
+    msg: "The following packages failed to install: {{ failed_packages }}"
+  when: failed_packages is defined
+
+- name: Download the Oracle Preinstall package
+  get_url:
+    url: "https://yum.oracle.com/repo/OracleLinux/OL7/latest/x86_64/getPackage/oracle-database-preinstall-19c-1.0-3.el7.x86_64.rpm"
+    dest: /u02/sources/oracle-database-preinstall-19c.rpm
+
+- name: Install Oracle Preinstall package
+  yum:
+    name: /u02/sources/oracle-database-preinstall-19c.rpm
+    state: present
+  ignore_errors: yes
+  

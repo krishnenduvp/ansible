@@ -1,0 +1,66 @@
+---
+- name: Remove specified files if they exist
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /etc/sysctl.d/99-initial-sysctl.conf
+    - /etc/sysctl.d/99-oracle-database-preinstall-19c-sysctl.conf
+    - /etc/security/limits.d/oracle-database-preinstall-19c.conf
+  ignore_errors: yes  # in case the file doesn't exist, continue
+
+- name: Copy configuration files to target directories
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: '0644'
+  loop:
+    - { src: '99-grid-oracle-limits.conf', dest: '/etc/security/limits.d/99-grid-oracle-limits.conf' }
+      #    - { src: '99-sysctl.conf', dest: '/etc/sysctl.d/99-sysctl.conf' }
+      #
+- name: Check if /etc/sysconfig/network-scripts/ifcfg-lo exists
+  stat:
+    path: /etc/sysconfig/network-scripts/ifcfg-lo
+  register: ifcfg_lo_file
+
+- name: Update MTU setting in /etc/sysconfig/network-scripts/ifcfg-lo
+  lineinfile:
+    path: /etc/sysconfig/network-scripts/ifcfg-lo
+    regexp: '^MTU='
+    line: 'MTU=16436'
+    state: present
+  when: ifcfg_lo_file.stat.exists
+  #  notify: Restart network
+
+- name: Uncomment and set RemoveIPC to no
+  lineinfile:
+    path: /etc/systemd/logind.conf
+    regexp: '^#?RemoveIPC='
+    line: 'RemoveIPC=no'
+    state: present
+    backrefs: yes
+  notify: Restart systemd-logind
+
+- name: Check current status of Transparent Huge Pages
+  command: cat /sys/kernel/mm/transparent_hugepage/enabled
+  register: thp_status
+
+- name: Print current THP status
+  debug:
+    msg: "Current THP status: {{ thp_status.stdout }}"
+
+- name: Disable Transparent Huge Pages temporarily
+  command: echo never > /sys/kernel/mm/transparent_hugepage/enabled
+  when: "'[never]' not in thp_status.stdout"
+
+- name: Disable Transparent Huge Pages permanently via grub
+  lineinfile:
+    path: /etc/default/grub
+    regexp: '^GRUB_CMDLINE_LINUX="(.*)"'
+    line: 'GRUB_CMDLINE_LINUX="\1 transparent_hugepage=never"'
+    backrefs: yes
+  when: "'[never]' not in thp_status.stdout"
+  notify: Update GRUB
+
