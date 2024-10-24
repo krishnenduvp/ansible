@@ -1,0 +1,30 @@
+---
+- name: Ensure /etc/udev/rules.d/99-asmdevices.rules exists
+  file:
+    path: /etc/udev/rules.d/99-asmdevices.rules
+    state: touch
+
+- name: Get disk serial number and add to udev rules
+  debug: 
+    msg: "{{ disk.name }}"
+  loop: "{{ asm_disks }}"
+  loop_control:
+    loop_var: disk
+
+- name: Get disk serial number
+  shell: udevadm info /dev/{{ item.partition }} | awk -F= '/ID_SERIAL=/ {print $2}'
+  register: disk_serial_results
+  loop: "{{ asm_disks }}"
+  loop_control:
+    loop_var: item
+
+- name: Add disk serial to udev rules
+  lineinfile:
+    path: /etc/udev/rules.d/99-asmdevices.rules
+    line: 'KERNEL=="sd*", ENV{ID_SERIAL}=="{{ item.stdout.strip() }}", SYMLINK+="oracleasm/disks/{{ item.item.name }}", OWNER="oracle", GROUP="dba", MODE="0660"'
+    state: present
+  loop: "{{ disk_serial_results.results }}"
+  loop_control:
+    loop_var: item
+  when: item.stdout is defined
+

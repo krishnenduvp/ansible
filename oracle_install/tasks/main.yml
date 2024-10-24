@@ -1,5 +1,13 @@
 ---
 - name: Include filesystem tasks
+  include_tasks: config_asmdisks.yml
+  when:
+    - oradata1_partition is defined
+    - oradata2_partition is defined 
+    - orafra1_partition is defined
+    - orafra2_partition is defined
+
+- name: Include filesystem tasks
   include_tasks: filesystem.yml
 
 - name: Include package installation tasks
@@ -11,3 +19,5 @@
 - name: Include oracle user configuration tasks
   include_tasks: oracle_user_profile.yml
   
+
+

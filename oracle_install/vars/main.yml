@@ -3,9 +3,6 @@
 # roles/package_install/vars/main.yml
 packages_list:
   - bc
-  - gcc
-ipackages_list:
-  - bc
   - bind-libs
   - bind-libs-lite
   - bind-license
@@ -99,4 +96,11 @@ groups_list:
   - { name: "asmoper", gid: 54328 }
   - { name: "asmadmin", gid: 54329 }
   - { name: "racdba", gid: 54330 }
+
+asm_disks:
+  - { name: "ORADATA1", partition: "{{ oradata1_partition }}" }
+  - { name: "ORADATA2", partition: "{{ oradata2_partition }}" }
+  - { name: "ORAFRA1", partition: "{{ orafra1_partition }}" }
+  - { name: "ORAFRA2", partition: "{{ orafra2_partition }}" }
+
 
