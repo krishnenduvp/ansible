@@ -25,6 +25,14 @@
     msg: "The following packages failed to install: {{ failed_packages }}"
   when: failed_packages is defined
 
+- name: Ensure /u02/sources directory exists
+  file:
+    path: /u02/sources
+    state: directory
+    mode: '0755'
+    owner: "oracle"
+    group: "oinstall"
+
 - name: Download the Oracle Preinstall package
   get_url:
     url: "{{ oracledb_preinstall_rpm }}"
