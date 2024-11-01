@@ -81,7 +81,6 @@
 - name: Fail if FQDN is not present in /etc/hosts
   fail:
     msg: "The FQDN {{ fqdn }} is not present in /etc/hosts. Please add it."
-  when: check_hosts.changed == true
-  ignore_errors: yes
+  when: not check_hosts
 
 
