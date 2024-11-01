@@ -70,17 +70,13 @@
     fqdn: "{{ ansible_facts['fqdn'] | default(ansible_hostname ~ '.' ~ ansible_domain) }}"
 
 - name: Check if /etc/hosts contains the FQDN
-  lineinfile:
-    path: /etc/hosts
-    line: "{{ fqdn }}"
-    state: present
-    regexp: "{{ fqdn }}"
-  check_mode: yes
+  shell: "grep -qw '{{ fqdn }}' /etc/hosts"
   register: check_hosts
+  ignore_errors: yes
 
-- name: Fail if FQDN is not present in /etc/hosts
-  fail:
-    msg: "The FQDN {{ fqdn }} is not present in /etc/hosts. Please add it."
-  when: not check_hosts
+- name: Print warning if FQDN is not present in /etc/hosts
+  debug:
+    msg: "Failed: The FQDN {{ fqdn }} is not present in /etc/hosts. Please add it."
+  when: check_hosts.rc != 0
 
 
