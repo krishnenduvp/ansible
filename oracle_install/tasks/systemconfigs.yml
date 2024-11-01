@@ -9,17 +9,18 @@
     - /etc/security/limits.d/oracle-database-preinstall-19c.conf
   ignore_errors: yes  # in case the file doesn't exist, continue
 
-- name: Copy configuration files to target directories
-  copy:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
+- name: Update configuration for 99-grid-oracle-limits.conf and 99-sysctl.conf 
+  blockinfile:
+    path: "{{ item.dest }}"
+    block: "{{ lookup('file', item.src) }}"
     owner: root
     group: root
     mode: '0644'
+    create: yes
   loop:
-    - { src: '99-grid-oracle-limits.conf', dest: '/etc/security/limits.d/99-grid-oracle-limits.conf' }
-      #    - { src: '99-sysctl.conf', dest: '/etc/sysctl.d/99-sysctl.conf' }
-      #
+    - { src: 'files/99-grid-oracle-limits.conf', dest: '/etc/security/limits.d/99-grid-oracle-limits.conf' }
+    - { src: 'files/99-sysctl.conf', dest: '/etc/sysctl.d/99-sysctl.conf' }
+      
 - name: Check if /etc/sysconfig/network-scripts/ifcfg-lo exists
   stat:
     path: /etc/sysconfig/network-scripts/ifcfg-lo
