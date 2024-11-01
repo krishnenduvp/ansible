@@ -27,7 +27,7 @@
 
 - name: Download the Oracle Preinstall package
   get_url:
-    url: "https://yum.oracle.com/repo/OracleLinux/OL7/latest/x86_64/getPackage/oracle-database-preinstall-19c-1.0-3.el7.x86_64.rpm"
+    url: "{{ oracledb_preinstall_rpm }}"
     dest: /u02/sources/oracle-database-preinstall-19c.rpm
 
 - name: Install Oracle Preinstall package
