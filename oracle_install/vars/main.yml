@@ -85,6 +85,7 @@ packages_list:
   - zlib-devel
   - zlib-devel.*i686
 
+oracledb_preinstall_rpm: "https://yum.oracle.com/repo/OracleLinux/OL7/latest/x86_64/getPackage/oracle-database-preinstall-19c-1.0-3.el7.x86_64.rpm"
 groups_list:
   - { name: "oinstall", gid: 54321 }
   - { name: "dba", gid: 54322 }
