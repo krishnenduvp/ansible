@@ -30,17 +30,16 @@
     path: /u02/sources
     state: directory
     mode: '0755'
-    owner: "oracle"
-    group: "oinstall"
 
-- name: Download the Oracle Preinstall package
-  get_url:
-    url: "{{ oracledb_preinstall_rpm }}"
+
+- name: Copy the Oracle Preinstall package from roles files directory
+  copy:
+    src: oracle-database-preinstall-19c-1.0-3.el7.x86_64.rpm
     dest: /u02/sources/oracle-database-preinstall-19c.rpm
+  when: oracledb_preinstall_rpm is defined
 
 - name: Install Oracle Preinstall package
   yum:
     name: /u02/sources/oracle-database-preinstall-19c.rpm
     state: present
   ignore_errors: yes
-  
