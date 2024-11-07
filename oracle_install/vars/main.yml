@@ -99,9 +99,13 @@ groups_list:
   - { name: "racdba", gid: 54330 }
 
 asm_disks:
-  - { name: "ORADATA1", partition: "{{ oradata1_partition }}" }
-  - { name: "ORADATA2", partition: "{{ oradata2_partition }}" }
-  - { name: "ORAFRA1", partition: "{{ orafra1_partition }}" }
-  - { name: "ORAFRA2", partition: "{{ orafra2_partition }}" }
+  - { name: "ORADATA1", partition: "{{ oradata1_partition | default('') }}" }
+  - { name: "ORADATA2", partition: "{{ oradata2_partition | default('') }}" }
+  - { name: "ORAFRA1", partition: "{{ orafra1_partition | default('') }}" }
+  - { name: "ORAFRA2", partition: "{{ orafra2_partition | default('') }}" }
+
+
+
+
 
 
