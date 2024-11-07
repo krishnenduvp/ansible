@@ -38,6 +38,19 @@
     - { src: 'grid_env.j2', dest: '/home/oracle/grid_env' }
     - { src: 'db_env.j2', dest: '/home/oracle/db_env' }
 
+- name: Set oracle user account to never expire
+  command: chage -m 0 -M -1 -I -1 -E -1 oracle
+
+- name: Copy the sudoers file for oracle user
+  template:
+    src: "oracle_sudoers.j2"
+    dest: "/etc/sudoers.d/oracleusers"
+    owner: root
+    group: root
+    mode: '0440'
+  vars:
+    server_hostname: "{{ ansible_hostname }}"
+  
 - name: Create directories for Oracle
   file:
     path: "{{ item }}"
