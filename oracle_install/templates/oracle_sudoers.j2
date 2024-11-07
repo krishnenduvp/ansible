@@ -1,0 +1,8 @@
+#
+User_Alias    ORACLEADMUSER = oracle
+#
+User_Alias    ORACLEUSR = oracle
+
+ORACLEUSR       {{ server_hostname }} = NOPASSWD: /bin/su - oracle
+ORACLEUSR       {{ server_hostname }} = NOPASSWD: /bin/su - grid
+ORACLEUSR       {{ server_hostname }} = NOPASSWD: /bin/su - root
